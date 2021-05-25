@@ -27,7 +27,7 @@ io.on("connection", (socket) => {
 
     socket.emit("message", {
       user: "admin",
-      text: `${user.name}, welcome to the room ${user.room}`,
+      text: `You have joined the chat ${user.room}`,
       date: moment(),
     });
 
@@ -54,7 +54,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
+    const user = getUser(socket.id);
     removeUser(socket.id);
+    socket.broadcast.to(user.room).emit("message", {
+      user: "admin",
+      text: `${user.name} has left the chat`,
+      date: moment(),
+    });
   });
 });
 

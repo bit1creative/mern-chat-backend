@@ -2,6 +2,7 @@ const express = require("express");
 const socketio = require("socket.io");
 const http = require("http");
 const moment = require("moment");
+const path = require("path");
 
 const {
   getUsers,
@@ -18,6 +19,8 @@ const router = require("./routes/mainRouter");
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
+
+app.use(express.static(path.join(__dirname, "build")));
 
 io.on("connection", (socket) => {
   socket.on("join", ({ name, room }, callback) => {

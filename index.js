@@ -1,8 +1,11 @@
+require("dotenv").config();
 const express = require("express");
 const socketio = require("socket.io");
 const http = require("http");
 const moment = require("moment");
 const path = require("path");
+// const mongoDBConnection = require("./database");
+const { saveMessage, findChatMessages } = require("./database");
 
 const {
   getUsers,
@@ -23,10 +26,16 @@ const io = socketio(server);
 app.use(express.static(path.join(__dirname, "build")));
 
 io.on("connection", (socket) => {
-  socket.on("join", ({ name, room }, callback) => {
+  socket.on("join", async ({ name, room }, callback) => {
     const { error, user } = addUser({ id: socket.id, name, room });
-
+    const messagesHistory = await findChatMessages(room);
     if (error) return callback(error);
+
+    if (messagesHistory) {
+      socket.emit("loadMessageHistory", {
+        messagesHistory,
+      });
+    }
 
     socket.emit("message", {
       user: "admin",
@@ -52,6 +61,8 @@ io.on("connection", (socket) => {
       text: message,
       date: moment(),
     });
+
+    saveMessage(user.room, user.name, message, moment());
 
     callback();
   });

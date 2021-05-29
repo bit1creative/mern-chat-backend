@@ -1,12 +1,16 @@
 const users = [];
 
 const addUser = ({ id, name, room }) => {
-  name = name.trim().toLowerCase();
-  room = room.trim().toLowerCase();
+  // name = name.trim().toLowerCase();
+  // room = room.trim().toLowerCase();
 
-  users.find((user) => user.room === room && user.name === name);
-
-  if (users.find((user) => user.room === room && user.name === name)) {
+  if (
+    users.find(
+      (user) =>
+        user.room.trim().toLowerCase() === room.trim().toLowerCase() &&
+        user.name.trim().toLowerCase() === name.trim().toLowerCase()
+    )
+  ) {
     return { error: "Username is taken" };
   }
 
@@ -26,7 +30,10 @@ const removeUser = (id) => {
 
 const getUser = (id) => users.find((user) => user.id == id);
 
-const getUserInRoom = (room) => users.filter((user) => user.room === room);
+const getUserInRoom = (room) =>
+  users.filter(
+    (user) => user.room.trim().toLowerCase() === room.trim().toLowerCase()
+  );
 
 const getUsers = () => users;
 

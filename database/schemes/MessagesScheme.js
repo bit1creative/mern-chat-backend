@@ -12,15 +12,12 @@ const MessageScheme = new Schema({
   date: reqString,
 });
 
-const ArrayOfMessagesScheme = new Schema({
+const ChatScheme = new Schema({
   chatName: reqString,
   messages: [MessageScheme],
 });
 
 const Message = mongoose.model("Message", MessageScheme);
-const ArrayOfMessages = mongoose.model(
-  "ArrayOfMessages",
-  ArrayOfMessagesScheme
-);
+const Chat = mongoose.model("Chat", ChatScheme);
 
-module.exports = { Message, ArrayOfMessages };
+module.exports = { Message, Chat };

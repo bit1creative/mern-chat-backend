@@ -1,8 +1,5 @@
 const mongoose = require("mongoose");
-const {
-  Message,
-  ArrayOfMessages,
-} = require("../database/schemes/MessagesScheme");
+const { Message, Chat } = require("../database/schemes/MessagesScheme");
 
 mongoose.connect(process.env.MONGODB_URL, {
   useNewUrlParser: true,
@@ -17,29 +14,23 @@ db.once("open", function () {
 
 const saveMessage = async (chatName, user, text, date) => {
   const msg = new Message({ user, text, date });
-  if (await ArrayOfMessages.exists({ chatName })) {
-    await ArrayOfMessages.findOneAndUpdate(
-      { chatName },
-      { $push: { messages: msg } }
-    );
-    await ArrayOfMessages.find({ chatName }, function (err, messages) {
+  if (await Chat?.exists({ chatName })) {
+    await Chat.findOneAndUpdate({ chatName }, { $push: { messages: msg } });
+    await Chat.find({ chatName }, function (err, messages) {
       if (err) return console.error(err);
-      //   console.log(messages);
     });
-    // console.log("Found one");
   } else {
-    const ArrayOfMsgs = new ArrayOfMessages({
+    const newChat = new Chat({
       chatName,
       messages: [msg],
     });
-    ArrayOfMsgs.save();
-    // console.log("Didn't find one");
+    newChat.save();
   }
 };
 
 const findChatMessages = async (chatName) => {
-  if (await ArrayOfMessages.exists({ chatName })) {
-    const msgs = await ArrayOfMessages.find({ chatName });
+  if (await Chat?.exists({ chatName })) {
+    const msgs = await Chat.find({ chatName });
     return msgs[0].messages;
   } else return false;
 };
